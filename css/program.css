@@ -13,16 +13,16 @@ html {
     color: rgb(0, 255, 255);
     text-align: center;
     text-shadow: /* 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135 */;
-    font-size: 10px;
+    font-size: 40px;
 }
 
 .cube {
     position: relative;
     margin: 0px auto;
-    margin-top: 12%;
-    margin-left: 42%;
-    width: 240px;
-    height: 240px;
+    margin-top: 34%;
+    margin-left: 50%;
+    width: 200px;
+    height: 200px;
     transform: rotateX(-30deg) rotateY(-80deg);
     transform-style: preserve-3d;
     animation: rotate 15s infinite;
@@ -54,41 +54,41 @@ html {
     position: absolute;
     top: 0;
     left: 0;
-    width: 240px;
-    height: 240px;
+    width: 200px;
+    height: 200px;
     border: 1px solid #fff;
     opacity: 0.3;
     transition: all .9s;
 }
 
 .outer-cube img {
-    width: 240px;
-    height: 240px;
+    width: 200px;
+    height: 200px;
 }
 
 
 .outer-top {
-    transform: rotateX(90deg) translateZ(120px);
+    transform: rotateX(90deg) translateZ(100px);
 }
 
 .outer-bottom {
-    transform: rotateX(-90deg) translateZ(120px);
+    transform: rotateX(-90deg) translateZ(100px);
 }
 
 .outer-front {
-    transform: rotateY(0deg) translateZ(120px);
+    transform: rotateY(0deg) translateZ(100px);
 }
 
 .outer-back {
-    transform: translateZ(-120px) rotateY(180deg);
+    transform: translateZ(-100px) rotateY(180deg);
 }
 
 .outer-left {
-    transform: rotateY(90deg) translateZ(120px);
+    transform: rotateY(90deg) translateZ(100px);
 }
 
 .outer-right {
-    transform: rotateY(-90deg) translateZ(120px);
+    transform: rotateY(-90deg) translateZ(100px);
 }
 
 /* 嵌套的内层立方体样式 */
@@ -96,37 +96,37 @@ html {
     position: absolute;
     top: 35px;
     left: 35px;
-    width: 160px;
-    height: 160px;
+    width: 130px;
+    height: 130px;
 }
 
 .inner-cube img {
-    width: 160px;
-    height: 160px;
+    width: 130px;
+    height: 130px;
 }
 
 .inner-top {
-    transform: rotateX(90deg) translateZ(80px);
+    transform: rotateX(90deg) translateZ(65px);
 }
 
 .inner-bottom {
-    transform: rotateX(-90deg) translateZ(80px);
+    transform: rotateX(-90deg) translateZ(65px);
 }
 
 .inner-front {
-    transform: rotateY(0deg) translateZ(80px);
+    transform: rotateY(0deg) translateZ(65px);
 }
 
 .inner-back {
-    transform: translateZ(-80px) rotateY(180deg);
+    transform: translateZ(-65px) rotateY(180deg);
 }
 
 .inner-left {
-    transform: rotateY(90deg) translateZ(80px);
+    transform: rotateY(90deg) translateZ(65px);
 }
 
 .inner-right {
-    transform: rotateY(-90deg) translateZ(80px);
+    transform: rotateY(-90deg) translateZ(65px);
 }
 
 .cube:hover .outer-top {
