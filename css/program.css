@@ -19,8 +19,8 @@ html {
 .cube {
     position: relative;
     margin: 0px auto;
-    margin-top: 34%;
-    margin-left: 30%;
+    margin-top: 54%;
+    margin-left: 90%;
     width: 200px;
     height: 200px;
     transform: rotateX(-30deg) rotateY(-80deg);
