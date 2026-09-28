@@ -183,6 +183,8 @@
             if(e.touches.length >= 2){
                 startDist = dist(e.touches);
                 startScale = scale;
+                // 缩放进行中：暂停 CSS 自转动画，避免"scale + rotate"每帧双重 3D 合成，缩小才不卡
+                cube.style.animationPlayState = 'paused';
             }
         }, { passive: true });
         document.addEventListener('touchmove', function(e){
@@ -194,39 +196,38 @@
                 apply();
             }
         }, { passive: false });
+        // 双指离开，恢复自转动画
+        document.addEventListener('touchend', function(e){
+            if(e.touches.length < 2){
+                cube.style.animationPlayState = 'running';
+            }
+        }, { passive: true });
     })();
 	</script>
 
-	<!-- 鼠标/触摸拖尾特效 (来自 mouse_trail.html) -->
+	<!-- 鼠标拖尾特效 (来自 mouse_trail.html) -->
 	<script>
 	(function(){
 	  var canvas = document.getElementById('trailCanvas');
+	  var W = window.innerWidth;
+	  var H = window.innerHeight;
+	  canvas.width = W;
+	  canvas.height = H;
 	  var ctx = canvas.getContext('2d');
+	  window.addEventListener('resize', function(){
+	    canvas.width = window.innerWidth;
+	    canvas.height = window.innerHeight;
+	  });
 
-	  // 移动端自动降载：手指设备上减少物理节点，保证不掉帧
-	  var isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
-	  var TRAILS   = isTouch ? 12 : 20;
-	  var SIZE     = isTouch ? 34 : 50;
-	  var DAMPENING= isTouch ? 0.45 : 0.25; // 触摸下更强阻尼，让头节点几乎实时跟手
-	  var TENSION  = 0.99;                  // 降低滞后，拖尾更"跟手"
-
-	  // 按设备像素比(D PR)初始化画布，兼顾清晰度与性能
-	  function resize(){
-	    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-	    // 移动端乘降载系数，减少实际绘制像素
-	    if(isTouch) dpr = Math.min(dpr, 1.5);
-	    canvas.width  = Math.round(window.innerWidth  * dpr);
-	    canvas.height = Math.round(window.innerHeight * dpr);
-	    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-	  }
-	  resize();
-	  window.addEventListener('resize', resize);
-
-	  var target = { x: window.innerWidth/2, y: window.innerHeight/2 };
+	  var target = { x: W/2, y: H/2 };
+	  var trails = 20;
+	  var size = 50;
+	  var dampening = 0.25;
+	  var tension = 0.98;
 	  var huePhase = 0;
 
 	  function hueNow(){
-	    huePhase += 0.006;
+	    huePhase += 0.0015;
 	    return 285 + Math.sin(huePhase)*85;
 	  }
 
@@ -241,7 +242,7 @@
 	    this.spring = spring + (Math.random()*0.1) - 0.05;
 	    this.friction = 0.5 + (Math.random()*0.01) - 0.005;
 	    this.nodes = [];
-	    for(var i=0;i<SIZE;i++){ this.nodes.push(new Node()); }
+	    for(var i=0;i<size;i++){ this.nodes.push(new Node()); }
 	  }
 	  Tendril.prototype.update = function(){
 	    var spring = this.spring;
@@ -254,14 +255,14 @@
 	        prev = this.nodes[i-1];
 	        node.vx += (prev.x - node.x) * spring;
 	        node.vy += (prev.y - node.y) * spring;
-	        node.vx += prev.vx * DAMPENING;
-	        node.vy += prev.vy * DAMPENING;
+	        node.vx += prev.vx * dampening;
+	        node.vy += prev.vy * dampening;
 	      }
 	      node.vx *= this.friction;
 	      node.vy *= this.friction;
 	      node.x += node.vx;
 	      node.y += node.vy;
-	      spring *= TENSION;
+	      spring *= tension;
 	    }
 	  };
 	  Tendril.prototype.draw = function(){
@@ -283,28 +284,20 @@
 	  var tendrils = [];
 	  function reset(){
 	    tendrils = [];
-	    for(var i=0;i<TRAILS;i++){ tendrils.push(new Tendril(0.45 + 0.025*(i/TRAILS))); }
+	    for(var i=0;i<trails;i++){ tendrils.push(new Tendril(0.45 + 0.025*(i/trails))); }
 	  }
 	  reset();
 
-	  function onMove(x, y){
-	    target.x = x;
-	    target.y = y;
-	  }
-
 	  document.addEventListener('mousemove', function(e){
-	    onMove(e.clientX, e.clientY);
+	    target.x = e.clientX;
+	    target.y = e.clientY;
 	  });
-	  // 触摸：passive:false + preventDefault，防止被滚动/橡皮筋打断
 	  document.addEventListener('touchmove', function(e){
-	    if(e.touches.length){
-	      e.preventDefault();
-	      onMove(e.touches[0].pageX, e.touches[0].pageY);
-	    }
-	  }, { passive: false });
+	    if(e.touches.length){ target.x = e.touches[0].pageX; target.y = e.touches[0].pageY; }
+	  }, {passive:true});
 	  document.addEventListener('touchstart', function(e){
-	    if(e.touches.length){ onMove(e.touches[0].pageX, e.touches[0].pageY); }
-	  }, { passive: true });
+	    if(e.touches.length){ target.x = e.touches[0].pageX; target.y = e.touches[0].pageY; }
+	  }, {passive:true});
 
 	  function loop(){
 	    ctx.globalCompositeOperation = 'source-over';
