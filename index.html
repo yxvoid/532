@@ -10,16 +10,93 @@
 	<meta name="describe" content="收集不易，您的star是我坚持的动力，同时也欢迎各位PR哦! ">
 	<link rel="icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/sun0225SUN/photos/img/20210715233345.png">
 	<link rel="stylesheet" href="./css/program.css">
+	<style>
+		/* ===== 底部文字特效 ===== */
+		#container {
+			position: fixed;
+			z-index: 20;
+			width: 100%;
+			bottom: 16px;
+			left: 0;
+			text-align: center;
+			pointer-events: none;
+		}
+
+		#container h1,
+		#container h2 {
+			font: 2.75em 'Cinzel', 'Songti SC', 'SimSun', serif;
+			font-weight: 400;
+			color: #6464b0;
+			letter-spacing: 0.35em;
+			text-shadow: 0 0 25px rgba(153, 153, 218, 0.85);
+			margin: 0;
+			padding: 0;
+		}
+
+		#container h2 {
+			font-size: 1.3em;
+			letter-spacing: 0.4em;
+			text-transform: lowercase;
+			margin-top: 10px;
+		}
+
+		[class^="letter"] {
+			transition: opacity 4s ease;
+		}
+
+		#container h1,
+		#container h2 {
+			visibility: hidden;
+			transform: translate3d(0, 0, 0);
+		}
+
+		#container h1.transition-in,
+		#container h2.transition-in {
+			visibility: visible;
+		}
+
+		#container h1 [class^="letter"],
+		#container h2 [class^="letter"] {
+			opacity: 0;
+		}
+
+		#container h1.transition-in [class^="letter"],
+		#container h2.transition-in [class^="letter"] {
+			opacity: 1;
+		}
+
+		.letter-0  { transition-delay: 0.5s; } .letter-1  { transition-delay: 0.7s; }
+		.letter-2  { transition-delay: 0.9s; } .letter-3  { transition-delay: 1.1s; }
+		.letter-4  { transition-delay: 1.3s; } .letter-5  { transition-delay: 1.5s; }
+		.letter-6  { transition-delay: 1.7s; } .letter-7  { transition-delay: 1.9s; }
+		.letter-8  { transition-delay: 2.1s; } .letter-9  { transition-delay: 2.3s; }
+		.letter-10 { transition-delay: 2.5s; } .letter-11 { transition-delay: 2.7s; }
+		.letter-12 { transition-delay: 2.9s; } .letter-13 { transition-delay: 3.1s; }
+		.letter-14 { transition-delay: 3.3s; } .letter-15 { transition-delay: 3.5s; }
+		.letter-16 { transition-delay: 3.7s; } .letter-17 { transition-delay: 3.9s; }
+		.letter-18 { transition-delay: 4.1s; } .letter-19 { transition-delay: 4.3s; }
+		.letter-20 { transition-delay: 4.5s; } .letter-21 { transition-delay: 4.7s; }
+		.letter-22 { transition-delay: 4.9s; } .letter-23 { transition-delay: 5.1s; }
+		.letter-24 { transition-delay: 5.3s; } .letter-25 { transition-delay: 5.5s; }
+		.letter-26 { transition-delay: 5.7s; } .letter-27 { transition-delay: 5.9s; }
+		.letter-28 { transition-delay: 6.1s; } .letter-29 { transition-delay: 6.3s; }
+	</style>
 </head>
 
 <body>
+	<!-- 拖尾特效背景 -->
+	<canvas id="trailCanvas"></canvas>
+	<style>
+		#trailCanvas{ position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
+	</style>
 	<div class="title">
 		532王从天降
 	</div>
 	<audio autoplay loop id="audios" preload="auto">
     <source src="xiaoniao.mp3" />
 	</audio>
-	<div class="cube">
+	<div class="cube-wrap">
+	<div class="cube" style="">
 		<!-- 外层立方体 -->
 		<div class="outer-cube">
 			<div class="outer-top">
@@ -63,11 +140,13 @@
 			</div>
 		</div>
 	</div>
-	<div>
-		<div class="message">
-			<div class="tip">
-				鼠标移入立方体
-			</div>
+	</div>
+	<!-- 文字特效 -->
+	<div id="container">
+		<div>
+			<h1 id="h1">532</h1>
+			<h2 id="h2">王之宿舍</h2>
+			<h2 id="h3">王疑惑，王巡查，王发现，王愤怒，王从天降，王成肉酱。</h2>
 		</div>
 	</div>
 
@@ -77,6 +156,175 @@
         const audio = document.getElementById('audios');
         if(audio.paused) audio.play();
     });
+
+    // 鼠标滑轮控制正方体大小 (and pinch zoom on touch)
+    (function(){
+        var cube = document.querySelector('.cube');
+        var wrap = document.querySelector('.cube-wrap');
+        var scale = 1;
+        function apply(){
+            wrap.style.transform = 'scale(' + scale + ')';
+        }
+        window.addEventListener('wheel', function(e){
+            e.preventDefault();
+            scale += (e.deltaY < 0 ? 0.08 : -0.08);
+            scale = Math.max(0.2, Math.min(8, scale));
+            apply();
+        }, { passive: false });
+
+        var startDist = 0;
+        var startScale = 1;
+        function dist(t){
+            var dx = t[0].clientX - t[1].clientX;
+            var dy = t[0].clientY - t[1].clientY;
+            return Math.sqrt(dx*dx + dy*dy);
+        }
+        document.addEventListener('touchstart', function(e){
+            if(e.touches.length >= 2){
+                startDist = dist(e.touches);
+                startScale = scale;
+            }
+        }, { passive: true });
+        document.addEventListener('touchmove', function(e){
+            if(e.touches.length >= 2){
+                e.preventDefault();
+                var d = dist(e.touches);
+                scale = startScale * (d / startDist);
+                scale = Math.max(0.2, Math.min(8, scale));
+                apply();
+            }
+        }, { passive: false });
+    })();
+	</script>
+
+	<!-- 鼠标拖尾特效 (来自 mouse_trail.html) -->
+	<script>
+	(function(){
+	  var canvas = document.getElementById('trailCanvas');
+	  var W = window.innerWidth;
+	  var H = window.innerHeight;
+	  canvas.width = W;
+	  canvas.height = H;
+	  var ctx = canvas.getContext('2d');
+	  window.addEventListener('resize', function(){
+	    canvas.width = window.innerWidth;
+	    canvas.height = window.innerHeight;
+	  });
+
+	  var target = { x: W/2, y: H/2 };
+	  var trails = 20;
+	  var size = 50;
+	  var dampening = 0.25;
+	  var tension = 0.98;
+	  var huePhase = 0;
+
+	  function hueNow(){
+	    huePhase += 0.0015;
+	    return 285 + Math.sin(huePhase)*85;
+	  }
+
+	  function Node(){
+	    this.x = target.x;
+	    this.y = target.y;
+	    this.vx = 0;
+	    this.vy = 0;
+	  }
+
+	  function Tendril(spring){
+	    this.spring = spring + (Math.random()*0.1) - 0.05;
+	    this.friction = 0.5 + (Math.random()*0.01) - 0.005;
+	    this.nodes = [];
+	    for(var i=0;i<size;i++){ this.nodes.push(new Node()); }
+	  }
+	  Tendril.prototype.update = function(){
+	    var spring = this.spring;
+	    var node = this.nodes[0];
+	    node.vx += (target.x - node.x) * spring;
+	    node.vy += (target.y - node.y) * spring;
+	    for(var i=0, prev, n=this.nodes.length; i<n; i++){
+	      node = this.nodes[i];
+	      if(i>0){
+	        prev = this.nodes[i-1];
+	        node.vx += (prev.x - node.x) * spring;
+	        node.vy += (prev.y - node.y) * spring;
+	        node.vx += prev.vx * dampening;
+	        node.vy += prev.vy * dampening;
+	      }
+	      node.vx *= this.friction;
+	      node.vy *= this.friction;
+	      node.x += node.vx;
+	      node.y += node.vy;
+	      spring *= tension;
+	    }
+	  };
+	  Tendril.prototype.draw = function(){
+	    var n = this.nodes;
+	    var a, b, x, y;
+	    ctx.beginPath();
+	    ctx.moveTo(n[0].x, n[0].y);
+	    for(var i=1, m=n.length-2; i<m; i++){
+	      a = n[i]; b = n[i+1];
+	      x = (a.x + b.x) * 0.5;
+	      y = (a.y + b.y) * 0.5;
+	      ctx.quadraticCurveTo(a.x, a.y, x, y);
+	    }
+	    a = n[i]; b = n[i+1];
+	    ctx.quadraticCurveTo(a.x, a.y, b.x, b.y);
+	    ctx.stroke();
+	  };
+
+	  var tendrils = [];
+	  function reset(){
+	    tendrils = [];
+	    for(var i=0;i<trails;i++){ tendrils.push(new Tendril(0.45 + 0.025*(i/trails))); }
+	  }
+	  reset();
+
+	  document.addEventListener('mousemove', function(e){
+	    target.x = e.clientX;
+	    target.y = e.clientY;
+	  });
+	  document.addEventListener('touchmove', function(e){
+	    if(e.touches.length){ target.x = e.touches[0].pageX; target.y = e.touches[0].pageY; }
+	  }, {passive:true});
+	  document.addEventListener('touchstart', function(e){
+	    if(e.touches.length){ target.x = e.touches[0].pageX; target.y = e.touches[0].pageY; }
+	  }, {passive:true});
+
+	  function loop(){
+	    ctx.globalCompositeOperation = 'source-over';
+	    ctx.fillStyle = 'rgba(8,5,16,0.4)';
+	    ctx.fillRect(0, 0, canvas.width, canvas.height);
+	    ctx.globalCompositeOperation = 'lighter';
+	    ctx.strokeStyle = 'hsla(' + Math.round(hueNow()) + ',90%,55%,0.6)';
+	    ctx.lineWidth = 2;
+	    for(var i=0;i<tendrils.length;i++){
+	      tendrils[i].update();
+	      tendrils[i].draw();
+	    }
+	    requestAnimationFrame(loop);
+	  }
+	  loop();
+	})();
+	</script>
+
+	<!-- 文字特效逐字淡入 -->
+	<script>
+	    (function(){
+	        function letters(id) {
+	            var el = document.getElementById(id),
+	                arr = el.innerHTML.split(''),
+	                heading = '';
+	            for (var i = 0; i < arr.length; i++) {
+	                heading += arr[i].trim() ? '<span class="letter-' + i + '">' + arr[i] + '</span>' : '&nbsp;';
+	            }
+	            el.innerHTML = heading;
+	            setTimeout(function(){ el.className = 'transition-in'; }, (Math.random() * 500) + 350);
+	        }
+	        letters('h1');
+	        letters('h2');
+	        letters('h3');
+	    })();
 	</script>
 
 </body>

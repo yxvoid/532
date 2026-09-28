@@ -3,26 +3,43 @@
     padding: 0px;
 }
 
+html, body {
+    background-color: #080510;
+}
+
 html {
     overflow: hidden;
     height: 100%;
-    background: url(../images/background.jpg); /*linear-gradient(rgb(0, 238, 255) 0%, #000 100%);*/
+    background: #080510 url(../images/background.jpg) center center / cover no-repeat;
 }
 
 .title {
     color: rgb(0, 255, 255);
     text-align: center;
     text-shadow: /* 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135 */;
-    font-size: 40px;
+    font-size: 10px;
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    pointer-events: none;
+}
+
+.cube-wrap {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    width: 240px;
+    height: 240px;
+    margin: -120px 0 0 -120px;
+    transform-origin: center center;
 }
 
 .cube {
     position: relative;
-    margin: 0px auto;
-    margin-top: 34%;
-    margin-left: 32%;
-    width: 200px;
-    height: 200px;
+    width: 240px;
+    height: 240px;
     transform: rotateX(-30deg) rotateY(-80deg);
     transform-style: preserve-3d;
     animation: rotate 15s infinite;
@@ -54,41 +71,41 @@ html {
     position: absolute;
     top: 0;
     left: 0;
-    width: 200px;
-    height: 200px;
+    width: 240px;
+    height: 240px;
     border: 1px solid #fff;
     opacity: 0.3;
     transition: all .9s;
 }
 
 .outer-cube img {
-    width: 200px;
-    height: 200px;
+    width: 240px;
+    height: 240px;
 }
 
 
 .outer-top {
-    transform: rotateX(90deg) translateZ(100px);
+    transform: rotateX(90deg) translateZ(120px);
 }
 
 .outer-bottom {
-    transform: rotateX(-90deg) translateZ(100px);
+    transform: rotateX(-90deg) translateZ(120px);
 }
 
 .outer-front {
-    transform: rotateY(0deg) translateZ(100px);
+    transform: rotateY(0deg) translateZ(120px);
 }
 
 .outer-back {
-    transform: translateZ(-100px) rotateY(180deg);
+    transform: translateZ(-120px) rotateY(180deg);
 }
 
 .outer-left {
-    transform: rotateY(90deg) translateZ(100px);
+    transform: rotateY(90deg) translateZ(120px);
 }
 
 .outer-right {
-    transform: rotateY(-90deg) translateZ(100px);
+    transform: rotateY(-90deg) translateZ(120px);
 }
 
 /* 嵌套的内层立方体样式 */
@@ -96,37 +113,37 @@ html {
     position: absolute;
     top: 35px;
     left: 35px;
-    width: 130px;
-    height: 130px;
+    width: 160px;
+    height: 160px;
 }
 
 .inner-cube img {
-    width: 130px;
-    height: 130px;
+    width: 160px;
+    height: 160px;
 }
 
 .inner-top {
-    transform: rotateX(90deg) translateZ(65px);
+    transform: rotateX(90deg) translateZ(80px);
 }
 
 .inner-bottom {
-    transform: rotateX(-90deg) translateZ(65px);
+    transform: rotateX(-90deg) translateZ(80px);
 }
 
 .inner-front {
-    transform: rotateY(0deg) translateZ(65px);
+    transform: rotateY(0deg) translateZ(80px);
 }
 
 .inner-back {
-    transform: translateZ(-65px) rotateY(180deg);
+    transform: translateZ(-80px) rotateY(180deg);
 }
 
 .inner-left {
-    transform: rotateY(90deg) translateZ(65px);
+    transform: rotateY(90deg) translateZ(80px);
 }
 
 .inner-right {
-    transform: rotateY(-90deg) translateZ(65px);
+    transform: rotateY(-90deg) translateZ(80px);
 }
 
 .cube:hover .outer-top {
@@ -193,9 +210,14 @@ html {
 }
 
 .message .tip {
-    position: absolute;
-    right: 0px;
-    margin-top: 60px;
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
     color: white;
     font-size: 18px;
+    z-index: 10;
+    pointer-events: none;
+    white-space: nowrap;
 }
